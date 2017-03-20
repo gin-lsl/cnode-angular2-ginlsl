@@ -1,0 +1,14 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">NG2-T2</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <form class="form-inline my-2 my-lg-0 ml-auto">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" #searchInput>
+      <button class="btn btn-outline-success my-2 my-sm-0" (click)="doSearch(searchInput.value)" type="submit">Search</button>
+    </form>
+  </div>
+</nav>

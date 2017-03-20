@@ -1,0 +1,74 @@
+<h3>最近评论的话题</h3>
+
+<div *ngIf="errorMsg != null">
+  {{errorMsg}}
+  <a class="btn btn-link" [routerLink]="['/setting']">登录</a>
+</div>
+
+<div *ngIf="errorMsg == null">
+  <div>
+    <nav>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/comment/to_me_has_not_read']">未读消息</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/comment/to_me_has_read']">已读消息</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" [routerLink]="['/comment/to_other']">我的回复</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div [ngSwitch]="type">
+    <template [ngSwitchCase]="'to_other'">
+      <div *ngIf="myRecentReplyList == null || myRecentReplyList.length == 0">
+        最近没有评论...
+      </div>
+      <div *ngIf="myRecentReplyList?.length > 0">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let _reply of myRecentReplyList">
+            <p>
+              <a [routerLink]="['/topic', _reply?.id]">{{_reply?.title}}</a>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template [ngSwitchCase]="'to_me_has_read'">
+      <div *ngIf="replyToMeHasRead == null || replyToMeHasRead.length == 0">
+        还没有人给你评论 ╮(╯-╰)╭
+      </div>
+      <div *ngIf="replyToMeHasRead?.length > 0">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let _reply of replyToMeHasRead">
+            <p>
+              <a [routerLink]="['/user', _reply?.author?.loginname]">{{_reply?.author?.loginname}}</a>
+              <span> 在 </span>
+              <a [routerLink]="['/topic', _reply?.topic?.id]">{{_reply?.topic?.title}}</a>
+              <span>{{' 中 ' + _reply?.type +' 了你.'}}</span>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template [ngSwitchCase]="'to_me_has_not_read'">
+      <div *ngIf="replyToMeHasNotRead == null || replyToMeHasNotRead.length == 0">
+        这里好空啊...
+      </div>
+      <div *ngIf="replyToMeHasNotRead?.length > 0">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let _reply of replyToMeHasNotRead">
+            <a [routerLink]="['/user', _reply?.author?.loginname]">{{_reply?.author?.loginname}}</a>
+            <span> 在 </span>
+            <a [routerLink]="['/topic', _reply?.topic?.id]">{{_reply?.topic?.title}}</a>
+            <span>{{' 中 ' + _reply?.type +' 了你.'}}</span>
+          </li>
+        </ul>
+      </div>
+    </template>
+  </div>
+
+</div>

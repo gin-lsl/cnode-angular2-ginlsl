@@ -1,0 +1,40 @@
+<div *ngIf="userDetail == null">
+  <form>
+    <div class="form-group">
+      <label for="token" class="col-form-label">Access Token</label>
+      <input type="text" id="token" class="form-control" name="token" #tokenInput>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn btn-primary btn-block" (click)="submitForm(tokenInput.value)">登录</button>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="userDetail != null">
+  <div>
+    <img width="80" height="80" class="img-thumbnail" src="{{userDetail?.avatar_url}}" alt="{{userDetail?.loginname}}">
+  </div>
+  <div>
+    <p>Recent Topics:</p>
+    <p *ngIf="userDetail?.recent_topics?.length == 0">
+      还没有发布过话题
+    </p>
+    <template *ngIf="userDetail?.recent_topics?.length > 0">
+      <p *ngFor="let recentTopic of userDetail?.recent_topics">
+        {{recentTopic?.title}}
+      </p>
+    </template>
+  </div>
+
+  <div>
+    <p>Recent Replies</p>
+    <p *ngIf="userDetail?.recent_replies?.length == 0">
+      还没有回复过话题
+    </p>
+    <template *ngIf="userDetail?.recent_replies?.length > 0">
+      <p *ngFor="let recentReply of userDetail?.recnet_replies">
+        {{recentReply?.title}}
+      </p>
+    </template>
+  </div>
+</div>

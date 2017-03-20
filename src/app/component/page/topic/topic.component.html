@@ -1,0 +1,80 @@
+<!-- 头部 -->
+<h3 class="d-flex" *ngIf="topicDetail">
+  <span>{{topicDetail?.title}}</span>
+  <div class="ml-auto" *ngIf="userAccessToken != null">
+    <button *ngIf="!topicDetail?.is_collect" class="btn btn-success float-right" role="button" type="button" (click)="toggleFavoriteTopic(true)">收 藏</button>
+    <button *ngIf="topicDetail?.is_collect" class="btn" type="button" role="button" (click)="toggleFavoriteTopic(false)">取消收藏</button>
+  </div>
+</h3>
+<div>
+  <ul class="topic_info">
+    <li [ngSwitch]="topicDetail?.tab">
+      <template [ngSwitchCase]="'ask'">来自 问答</template>
+      <template [ngSwitchCase]="'share'">来自 分享</template>
+      <template [ngSwitchCase]="'job'">来自 招聘</template>
+      <template [ngSwitchCase]="'good'">来自 精华</template>
+    </li>
+    <li *ngIf="topicDetail?.create_at">{{'创建于 ' + (topicDetail?.create_at | date:'yyyy-MM-dd hh:mm:ss')}}</li>
+    <li>{{topicDetail?.visit_count + ' 次访问'}}</li>
+    <li *ngIf="topicDetail?.last_reply_at">{{'最后一次回复 ' + (topicDetail?.last_reply_at | date:'yyyy-MM-dd hh:mm:ss')}}</li>
+    <li>
+      <span>作者</span>
+      <a *ngIf="topicDetail?.author?.loginname" [routerLink]="['/user', topicDetail.author.loginname]">{{topicDetail?.author?.loginname}}</a>
+    </li>
+  </ul>
+  <div>
+  </div>
+</div>
+
+<!-- 内容 -->
+<div class="topic_content" [innerHTML]="convertToHtml(topicDetail?.content)"></div>
+
+<!-- 回复 -->
+<div class="replies">
+  <div class="replies_pane_header">
+    {{topicDetail?.replies.length + '条回复'}}
+  </div>
+  <div class="replies_pane_body">
+    <div class="replies_item" *ngFor="let _reply of topicDetail?.replies; let index = index">
+      <div>
+        <a [routerLink]="['/user', _reply?.author?.loginname]">
+          <img class="img-thumbnail" width="50" height="50" src="{{_reply?.author?.avatar_url}}" alt="{{_reply?.author?.loginname}}">
+        </a>
+        <span class="reply_loginname"><a [routerLink]="['/user', _reply?.author?.loginname]">{{_reply?.author?.loginname}}</a></span>
+        <span class="do_reply" role="button" (click)="toggleReplyBox(replyBox)">回复</span>
+        <span class="pull_right">
+          <span class="up_reply" (click)="upOrDownReply(_reply?.id, index)" role="button">赞 {{_reply?.ups.length}}</span>
+        <span>{{index + 1 + ' 楼'}}</span>
+        <span title="{{_reply?.create_at | date:'yyyy-MM-dd hh:mm:ss'}}">
+            {{_reply?.create_at | date:'yyyy-MM-dd'}}
+          </span>
+        </span>
+        <p class="reply_item_content" [innerHTML]="convertToHtml(_reply?.content)"></p>
+        <div class="reply_box" #replyBox>
+          <textarea cols="30" rows="10" #replyTextAreatoSb>{{'@' + _reply?.author?.loginname + '\n'}}</textarea>
+          <button type="button" class="btn btn-primary" (click)="replyToSb(_reply, replyTextAreatoSb.value); replyTextAreatoSb.value = _reply?.author?.loginname + '\n';">回复</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 回复区域 -->
+<div class="write_reply">
+  <div class="write_reply_header">
+    添加回复
+  </div>
+  <div class="write_reply_body">
+    <form action="" class="write_reply_form">
+      <div class="write_reply_toolbar">
+
+      </div>
+      <div class="write_reply_content">
+        <textarea cols="30" rows="10" #replyTextArea></textarea>
+      </div>
+      <div class="write_reply_btn">
+        <button type="button" class="btn btn-primary" (click)="submitReply(replyTextArea.value); replyTextArea.value = '';">回复</button>
+      </div>
+    </form>
+  </div>
+</div>

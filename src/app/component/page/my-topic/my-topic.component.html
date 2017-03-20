@@ -1,0 +1,16 @@
+<h3>最近发布的话题</h3>
+<div *ngIf="errorMsg != null">
+  {{'发生错误:\n' + errorMsg}}
+</div>
+<div *ngIf="errorMsg == null">
+  <div *ngIf="myRecentTopicList == null || myRecentTopicList.length == 0">
+    最近没有发布话题
+  </div>
+  <div *ngIf="myRecentTopicList?.length > 0">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let _rTopic of myRecentTopicList">
+        <p><a [routerLink]="['/topic', _rTopic?.id]">{{_rTopic?.title}}</a></p>
+      </li>
+    </ul>
+  </div>
+</div>

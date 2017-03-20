@@ -1,0 +1,19 @@
+<div *ngIf="recentReplyList">
+  <div class="card">
+    <div class="card-header card-primary">
+      全部回复
+    </div>
+    <div class="card-block">
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let _rReply of recentReplyList">
+          <p>
+            <a [routerLink]="['/user', _rReply?.author?.loginname]">
+              <img src="{{_rReply?.author?.avatar_url}}" width="50" height="50" alt="{{_rReply?.author?.loginname}}" class="img-thumbnail">
+            </a>
+            <a [routerLink]="['/topic', _rReply?.id]">{{_rReply?.title}}</a>
+          </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

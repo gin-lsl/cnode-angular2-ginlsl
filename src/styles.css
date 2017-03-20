@@ -1,0 +1,43 @@
+/* You can add global styles to this file, and also import other style files */
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+}
+body {
+  overflow-x: hidden;
+}
+
+app-home, app-setting, app-topic, app-favorite, app-comment, app-user-detail-main, app-user-detail-replies, app-user-detail-topics, app-my-topic {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.markdown-text {
+  font-family: 'Consolas', '微软雅黑', serif;
+}
+
+.markdown-text img {
+  width: 35%;
+}
+
+.markdown-text p {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+}
+.markdown-text ul, ol {
+  margin-left: 25px;
+}
+
+.markdown-text li {
+  padding: 5px 0;
+}
+
+ul.pagination {
+  display: inline-block;
+}
+
+ul.pagination>li {
+  float: left;
+}
