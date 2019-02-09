@@ -1,0 +1,8 @@
+<h4>收藏的主题</h4>
+<div>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let _cTopic of collectTopicList">
+      <p><a [routerLink]="['/topic', _cTopic?.id]">{{_cTopic?.title}}</a></p>
+    </li>
+  </ul>
+</div>

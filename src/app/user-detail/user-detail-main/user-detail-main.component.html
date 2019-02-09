@@ -1,0 +1,47 @@
+<div>
+  <!-- 基本信息 -->
+  <div class="card">
+
+    <h4 class="card-header card-primary">{{userDetail?.loginname}}</h4>
+    <div class="card-block">
+      <p>
+        <img width="100" height="100" class="img-thumbnail" src="{{userDetail?.avatar_url}}" alt="{{userDetail?.loginname}}">
+      </p>
+      <div>{{userDetail?.create_at | date:'yyyy-MM-dd hh:mm:ss' + ' 加入CNode社区'}}</div>
+    </div>
+  </div>
+
+  <!-- 最新话题 -->
+  <div class="card my-5">
+    <div class="card-header card-primary">
+      最新发布的话题
+    </div>
+    <div class="card-block">
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let _rTopic of userDetail?.recent_topics.slice(0, 4)">
+          <a [routerLink]="['/topic', _rTopic?.id]">{{_rTopic?.title}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a *ngIf="userDetail?.loginname" [routerLink]="['/user', userDetail?.loginname, 'topics']">查看更多</a>
+    </div>
+  </div>
+
+  <!-- 最新评论 -->
+  <div class="card">
+    <div class="card-header card-primary">
+      最新发布的评论
+    </div>
+    <div class="card-block">
+      <ul class="list-group" *ngFor="let _rReply of userDetail?.recent_replies.slice(0, 4)">
+        <li class="list-group-item">
+          <a [routerLink]="['/topic', _rReply?.id]">{{_rReply?.title}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a *ngIf="userDetail?.loginname" [routerLink]="['/user/', userDetail?.loginname, 'replies']">查看更多</a>
+    </div>
+  </div>
+</div>

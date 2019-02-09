@@ -1,0 +1,6 @@
+<div  [ngClass]="{'visibility_pane': isMenuPaneOpen, 'collapse_pane': !isMenuPaneOpen}">
+  <a [routerLink]="menuItemObj?.routerLink" routerLinkActive="active">
+    <span class="menu_item_icon">&#xE10F;</span>
+    <span class="menu_item_title">{{menuItemObj?.title}}</span>
+  </a>
+</div>

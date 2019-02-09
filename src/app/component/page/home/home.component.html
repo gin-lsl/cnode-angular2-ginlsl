@@ -1,0 +1,52 @@
+<div *ngIf="errorMsg != null" class="errormsg">
+  {{errorMsg}}
+</div>
+<div *ngIf="errorMsg == null && dataLoadFinish">
+  <nav>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']" [routerLinkActiveOptions]="{exact: true}">全部</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']" [queryParams]="{tab: 'good'}">精华</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']" [queryParams]="{tab: 'ask'}">问答</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']" [queryParams]="{tab: 'job'}">招聘</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']" [queryParams]="{tab: 'share'}">分享</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="topic_list" *ngFor="let _topic of topicList">
+    <p>
+      <span class="avatar">
+        <a [routerLink]="['/user', _topic?.author?.loginname]">
+          <img width="40" height="40" src="{{_topic?.author?.avatar_url}}" alt="{{_topic?.author?.loginname}}">
+        </a>
+      </span>
+      <span class="reply_visit">
+        <span>{{_topic?.reply_count}}</span>/<span class="topic_view_count">{{_topic?.visit_count}}</span>
+      </span>
+      <span class="light_tab" *ngIf="_topic?.top">置顶</span>
+      <span class="light_tab" *ngIf="!_topic?.top && _topic?.good">精华</span>
+      <span class="tab" *ngIf="!_topic?.top && !_topic?.good && _topic?.tab" [ngSwitch]="_topic?.tab">
+        <template [ngSwitchCase]="'ask'">问答</template>
+        <template [ngSwitchCase]="'share'">分享</template>
+        <template [ngSwitchCase]="'job'">招聘</template>
+        <template [ngSwitchCase]="'good'">精华</template>
+      </span>
+      <span class="title">
+        <a [routerLink]="['/topic', _topic?.id]">{{_topic?.title}}</a>
+      </span>
+      <span class="last_reply_time">{{_topic?.last_reply_at | date:'yyyy-MM-dd hh:mm:ss'}}</span>
+    </p>
+  </div>
+  <div class="text-center">
+    <pagination [boundaryLinks]="true" [totalItems]="totalItems" [(ngModel)]="currentPage" previousText="&lsaquo;" nextText="&rsaquo;"
+      (pageChanged)="goAnotherPage($event)" [rotate]="true" [maxSize]="maxSize" firstText="&laquo;" lastText="&raquo;"></pagination>
+  </div>
+</div>
