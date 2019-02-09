@@ -4,7 +4,7 @@ import { AppBarButtonTappedService } from '../../../../service/subjects/app-bar-
 @Component({
   selector: 'app-menu-header',
   templateUrl: './menu-header.component.html',
-  styleUrls: ['./menu-header.component.css']
+  styleUrls: ['./menu-header.component.styl']
 })
 export class MenuHeaderComponent implements OnInit {
 

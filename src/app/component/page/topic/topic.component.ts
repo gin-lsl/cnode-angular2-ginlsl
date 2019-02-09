@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-topic',
   templateUrl: './topic.component.html',
-  styleUrls: ['./topic.component.css']
+  styleUrls: ['./topic.component.styl']
 })
 export class TopicComponent implements OnInit {
   private topicId: string;

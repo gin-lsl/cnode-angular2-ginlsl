@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-user-detail-main',
   templateUrl: './user-detail-main.component.html',
-  styleUrls: ['./user-detail-main.component.css']
+  styleUrls: ['./user-detail-main.component.styl']
 })
 export class UserDetailMainComponent implements OnInit {
 

@@ -4,7 +4,7 @@ import { AppBarButtonTappedService } from '../../../../service/subjects/app-bar-
 @Component({
   selector: 'app-split-view',
   templateUrl: './split-view.component.html',
-  styleUrls: ['./split-view.component.css']
+  styleUrls: ['./split-view.component.styl']
 })
 export class SplitViewComponent implements OnInit {
 

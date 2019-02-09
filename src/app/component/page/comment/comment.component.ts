@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.css']
+  styleUrls: ['./comment.component.styl']
 })
 export class CommentComponent implements OnInit {
 

@@ -9,7 +9,7 @@ import { HttpClient } from 'selenium-webdriver/http';
 @Component({
   selector: 'app-user-detail-topics',
   templateUrl: './user-detail-topics.component.html',
-  styleUrls: ['./user-detail-topics.component.css']
+  styleUrls: ['./user-detail-topics.component.styl']
 })
 export class UserDetailTopicsComponent implements OnInit {
 

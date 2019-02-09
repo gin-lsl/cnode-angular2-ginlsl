@@ -5,7 +5,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 @Component({
   selector: 'app-topic-detail',
   templateUrl: './topic-detail.component.html',
-  styleUrls: ['./topic-detail.component.css']
+  styleUrls: ['./topic-detail.component.styl']
 })
 export class TopicDetailComponent implements OnInit {
 

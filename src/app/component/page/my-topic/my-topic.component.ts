@@ -7,7 +7,7 @@ import { UserAuthService } from '../../../service/subjects/user-auth.service';
 @Component({
   selector: 'app-my-topic',
   templateUrl: './my-topic.component.html',
-  styleUrls: ['./my-topic.component.css']
+  styleUrls: ['./my-topic.component.styl']
 })
 export class MyTopicComponent implements OnInit {
 
