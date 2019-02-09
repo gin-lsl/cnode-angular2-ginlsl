@@ -10,8 +10,6 @@ import { ConfigService } from './service/config.service';
 import { UserAuthService } from './service/subjects/user-auth.service';
 import { AppBarButtonTappedService } from './service/subjects/app-bar-button-tapped.service';
 
-import { AppRoutes } from './app.routing';
-
 import { AppComponent } from './app.component';
 import { HomeComponent } from './component/page/home/home.component';
 import { TopicComponent } from './component/page/topic/topic.component';
@@ -31,6 +29,7 @@ import { SplitViewComponent } from './component/common/split-views/split-view/sp
 import { SplitViewPaneComponent } from './component/common/split-views/split-view-pane/split-view-pane.component';
 import { SplitViewContentComponent } from './component/common/split-views/split-view-content/split-view-content.component';
 import { UserDetailModule } from './user-detail/user-detail.module';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -56,7 +55,7 @@ import { UserDetailModule } from './user-detail/user-detail.module';
   ],
   imports: [
     UserDetailModule,
-    AppRoutes,
+    AppRoutingModule,
     HttpClientModule,
     FormsModule,
     BrowserModule,
