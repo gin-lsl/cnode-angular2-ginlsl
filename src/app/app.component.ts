@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { Title, SafeHtml, DomSanitizer } from '@angular/platform-browser';
+
+import { ConfigService } from './service/config.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +10,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'cnode-angular2-ginlsl';
+  title = 'app works!';
+
+  constructor(
+    private http: HttpClient,
+    private domSanitizer: DomSanitizer,
+    private _configService: ConfigService,
+  ) {
+
+    // console.log(_configService.getAccessToken());
+  }
+
 }

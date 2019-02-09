@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular//http';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../service/config.service';
 import { Observable } from 'rxjs';
 
 import { User } from '../../model/user';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-detail-main',
@@ -18,7 +18,7 @@ export class UserDetailMainComponent implements OnInit {
   private userDetail: User;
 
   constructor(
-    private _http: Http,
+    private _http: HttpClient,
     private _activatedRoute: ActivatedRoute,
     private _configService: ConfigService,
   ) { }

@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { ConfigService } from '../../service/config.service';
-import { Http } from '@angular/http';
 import { Recent } from '../../model/recent';
+import { HttpClient } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'app-user-detail-replies',
@@ -16,7 +16,7 @@ export class UserDetailRepliesComponent implements OnInit {
   private recentReplyList: Recent[];
 
   constructor(
-    private _http: Http,
+    private _http: HttpClient,
     private _configService: ConfigService,
     private _activatedRoute: ActivatedRoute,
   ) { }
