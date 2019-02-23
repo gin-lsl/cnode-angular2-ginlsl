@@ -9,10 +9,10 @@ import { AppBarButtonTappedService } from '../../../../service/subjects/app-bar-
 })
 export class MenuItemComponent implements OnInit {
 
-  private isMenuPaneOpen: boolean = true;
+  isMenuPaneOpen: boolean = true;
 
   @Input()
-  private menuItemObj: MenuItem;
+  menuItemObj: MenuItem;
 
   constructor(
     private _appBarButtonTappedService: AppBarButtonTappedService,

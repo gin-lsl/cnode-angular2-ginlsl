@@ -7,19 +7,20 @@ import { UserAuthService } from '../../../service/subjects/user-auth.service';
 import { Observable } from "rxjs";
 import { Topic } from '../../../model/topic';
 import { HttpClient } from '@angular/common/http';
+import { switchMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-favorite',
   templateUrl: './favorite.component.html',
-  styleUrls: ['./favorite.component.css']
+  styleUrls: ['./favorite.component.styl']
 })
 export class FavoriteComponent implements OnInit {
 
   private userFavoriteUri: string;
 
-  private userLoginName: string;
+  userLoginName: string;
 
-  private collectTopicList: Topic[];
+  collectTopicList: Topic[];
 
   constructor(
     private _http: HttpClient,
@@ -31,29 +32,32 @@ export class FavoriteComponent implements OnInit {
   }
 
   private initLoginName(): Observable<string> {
-    return this._activatedRoute.params.switchMap((params: Params) => {
-      let _loginName = params['loginname'];
-      if (_loginName == null) {
-        let _at = this._userAuthService.checkHasLocalStorageOrNot();
-        return this._http.post(this._configService.userValidAPI(), { accesstoken: _at }).map(resUser => {
-          if (resUser.ok) {
-            let _json = resUser.json();
-            if (_json.success) {
-              return _json.loginname;
-            }
+    return this._activatedRoute.params
+      .pipe(
+        switchMap((params: Params) => {
+          let _loginName = params['loginname'];
+          if (_loginName == null) {
+            let _at = this._userAuthService.checkHasLocalStorageOrNot();
+            return this._http.post(this._configService.userValidAPI(), { accesstoken: _at })
+              .pipe(
+                map(resUser => {
+                  if (resUser['success']) {
+                    return resUser['loginname'];
+                  }
+                })
+              )
+          } else {
+            return _loginName;
           }
-        })
-      } else {
-        return _loginName;
-      }
-    });
+        }),
+      );
   }
 
   ngOnInit() {
     this.initLoginName().subscribe(_loginname => {
       this._http.get(this._configService.getTopicListForUserCollected() + _loginname).subscribe(x => {
-        if (x.ok) {
-          this.collectTopicList = x.json().data;
+        if (x['success']) {
+          this.collectTopicList = x['data'];
         }
       });
     });

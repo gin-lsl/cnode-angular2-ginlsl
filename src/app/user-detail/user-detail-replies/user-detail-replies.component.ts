@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 import { ConfigService } from '../../service/config.service';
 import { Recent } from '../../model/recent';
-import { HttpClient } from 'selenium-webdriver/http';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-detail-replies',
@@ -13,10 +14,10 @@ import { HttpClient } from 'selenium-webdriver/http';
 })
 export class UserDetailRepliesComponent implements OnInit {
 
-  private recentReplyList: Recent[];
+  recentReplyList$: Observable<Recent[]>;
 
   constructor(
-    private _http: HttpClient,
+    private _httpClient: HttpClient,
     private _configService: ConfigService,
     private _activatedRoute: ActivatedRoute,
   ) { }
@@ -26,17 +27,26 @@ export class UserDetailRepliesComponent implements OnInit {
   }
 
   initParams(): Observable<string> {
-    return this._activatedRoute.params.filter(_ => _['loginname']).map(_ => _['loginname']);
+    return this._activatedRoute.params
+      .pipe(
+        filter(x => x['loginname']),
+        map(x => x['loginname']),
+      );
   }
 
   loadReplyList() {
-    this.initParams()
-      .switchMap(_ => this._http.get(this._configService.getUserDetail() + _))
-      .filter(_ => _.ok)
-      .map(_ => _.json())
-      .filter(_ => _.success)
-      .map(_ => _.data.recent_replies)
-      .subscribe(_ => this.recentReplyList = _);
+    this.recentReplyList$ = this.initParams()
+      .pipe(
+        switchMap(x => this._httpClient.get(this._configService.getUserDetail() + x)),
+        filter(x => x['success']),
+        map(x => x['data']['recent_replies']),
+      );
+      // .switchMap(_ => this._http.get(this._configService.getUserDetail() + _))
+      // .filter(_ => _.ok)
+      // .map(_ => _.json())
+      // .filter(_ => _.success)
+      // .map(_ => _.data.recent_replies)
+      // .subscribe(_ => this.recentReplyList = _);
   }
 
 }

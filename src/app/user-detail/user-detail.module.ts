@@ -19,6 +19,7 @@ import { UserDetailMainComponent } from './user-detail-main/user-detail-main.com
     UserDetailRepliesComponent,
     UserDetailTopicsComponent,
     UserDetailMainComponent,
+    UserDetailComponent,
   ]
 })
 export class UserDetailModule { }

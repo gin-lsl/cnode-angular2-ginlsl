@@ -12,6 +12,7 @@ import { TopicDetail } from '../../../model/topic-detail';
 
 
 import { Observable } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-topic',
@@ -19,13 +20,13 @@ import { Observable } from 'rxjs';
   styleUrls: ['./topic.component.styl']
 })
 export class TopicComponent implements OnInit {
-  private topicId: string;
+  topicId: string;
 
-  private topicDetail: TopicDetail;
+  topicDetail: TopicDetail;
 
-  private topicDetailUrl: string;
+  topicDetailUrl: string;
 
-  private userAccessToken: string;
+  userAccessToken: string;
 
   constructor(
     private _http: HttpClient,
@@ -54,10 +55,10 @@ export class TopicComponent implements OnInit {
     let _params = new HttpParams();
     _params.append('accesstoken', this.userAccessToken);
     return this._http.get(this.topicDetailUrl, { params: _params })
-      .filter(_ => _.ok)
-      .map(_ => _.json())
-      .filter(_ => _.success)
-      .map(_ => _.data as TopicDetail);
+      .pipe(
+        filter(_ => _['success']),
+        map(_ => _['data'] as TopicDetail),
+      )
     // .subscribe(_ => this.topicDetail.replies = _.replies);
   }
 
@@ -74,7 +75,7 @@ export class TopicComponent implements OnInit {
       let wannaUrl = wannaFavorite ? this._configService.userDoFavoriteTopic() : this._configService.userDoDeFavoriteTopic();
       this._http.post(wannaUrl, { accesstoken: this.userAccessToken, topic_id: this.topicId })
         .subscribe(res => {
-          if (res.ok && res.json().success) {
+          if (res['success']) {
             this.topicDetail.is_collect = wannaFavorite;
           }
         });
@@ -85,15 +86,14 @@ export class TopicComponent implements OnInit {
     if (this.userAccessToken != null) {
       let _postReplyUri = this._configService.postReplyInTopic(this.topicId);
       this._http.post(_postReplyUri, { accesstoken: this.userAccessToken, content: replyContent })
-        .filter(_ => _.ok)
-        .map(_ => _.json())
-        .filter(_ => _.success)
-        .map(_ => _.reply_id)
-        .switchMap(_ => this.loadTopicDetail()).subscribe(_ => this.topicDetail.replies = _.replies);
+        .pipe(
+          filter(_ => _['success']),
+          map(_ => _['reply_id']),
+          switchMap(_ => this.loadTopicDetail()),
+        )
+        .subscribe(_ => this.topicDetail.replies = _.replies);
     }
   }
-
-
 
   toggleReplyBox(replyBox: HTMLDivElement) {
     replyBox.classList.toggle('active_reply_box');
@@ -114,10 +114,10 @@ export class TopicComponent implements OnInit {
     if (this.userAccessToken != null) {
       this._http
         .post(this._configService.upOrDownReply(replyId), { accesstoken: this.userAccessToken })
-        .filter(_ => _.ok)
-        .map(_ => _.json())
-        .filter(_ => _.success)
-        .map(_ => _.action)
+        .pipe(
+          filter(_ => _['success']),
+          map(_ => _['action']),
+        )
         .subscribe(_ => {
           // up | down
           if (_ == 'up') {

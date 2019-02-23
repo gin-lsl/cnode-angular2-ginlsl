@@ -6,10 +6,11 @@ import { UserAuthService } from '../../../service/subjects/user-auth.service';
 import { User } from '../../../model/user';
 import { Topic } from '../../../model/topic';
 import { Recent } from '../../../model/recent';
-import { Observable } from 'rxjs';
+import { Observable, of, pipe } from 'rxjs';
 
 import 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { switchMap, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-comment',
@@ -24,26 +25,26 @@ export class CommentComponent implements OnInit {
     2 别人给我的回复
    */
 
-  private userDetail: User;
+  userDetail: User;
 
   private userDetailUri: string;
 
-  private myRecentReplyList: Recent[];
+  myRecentReplyList: Recent[];
 
-  private type: string = 'to_me';
+  type: string = 'to_me';
 
   private userAccessToken: string;
 
-  private userLoginName: string;
+  userLoginName: string;
 
-  private errorMsg: string;
+  errorMsg: string;
 
-  private replyToMeHasNotRead: any[];
+  replyToMeHasNotRead: any[];
 
-  private replyToMeHasRead: any[];
+  replyToMeHasRead: any[];
 
   constructor(
-    private _http: HttpClient,
+    private _httpClient: HttpClient,
     private _configService: ConfigService,
     private _activatedRoute: ActivatedRoute,
     private _userAuthService: UserAuthService,
@@ -53,13 +54,12 @@ export class CommentComponent implements OnInit {
   }
 
   private initUserLoginName(): Observable<string> {
-    return this.checkUserIsLoginOrNot().switchMap(_ => {
-      return this._http.post(this._configService.userValidAPI(), { accesstoken: _ })
-        .filter(_ => _.ok)
-        .map(_ => _.json())
-        .filter(_ => _.success)
-        .map(_ => _.loginname);
-    });
+    return this.checkUserIsLoginOrNot()
+      .pipe(
+        switchMap(x => this._httpClient.post(this._configService.userValidAPI(), {accessToken: x})),
+        filter(x => x['success']),
+        map(x => x['loginname']),
+      );
   }
 
   checkUserIsLoginOrNot(): Observable<string> {
@@ -75,10 +75,13 @@ export class CommentComponent implements OnInit {
   }
 
   initParams(): Observable<string> {
-    return this._activatedRoute.params.switchMap(_ => {
-      this.type = _['type'];
-      return Observable.of(_['type']);
-    });
+    return this._activatedRoute.params
+      .pipe(
+        switchMap(x => {
+          this.type = x['type'];
+          return of(x['type']);
+        }),
+      );
   }
 
   loadMessages_HasRead() {
@@ -90,36 +93,39 @@ export class CommentComponent implements OnInit {
   }
 
   loadMessageListToMe(accessToken: string): Observable<any> {
-    let _params = new URLSearchParams();
+    let _params = new HttpParams();
     _params.append('accesstoken', accessToken);
     _params.append('mdrender', 'false');
-    return this._http.get(this._configService.getMessages(), { search: _params })
-      .filter(_ => _.ok).map(_ => _.json());
+    return this._httpClient.get(this._configService.getMessages(), {params: _params});
   }
 
   loadMessageListToOtherOne(loginname: string): Observable<any> {
-    return this._http.get(this._configService.getUserDetail() + loginname)
-      .filter(_ => _.ok)
-      .map(_ => _.json());
+    return this._httpClient.get(this._configService.getUserDetail() + loginname);
   }
 
   loadData() {
     this.initParams().subscribe(_ => {
       if (_ == 'to_me_has_read') {
         this.checkUserIsLoginOrNot()
-          .switchMap(x => this.loadMessageListToMe(x))
-          .filter(x => x.success)
-          .subscribe(x => this.replyToMeHasRead = x.data.has_read_messages);
+          .pipe(
+            switchMap(x => this.loadMessageListToMe(x)),
+            filter(x => x['success']),
+          )
+          .subscribe(x => this.replyToMeHasRead = x['data']['has_read_messages']);
       } else if (_ == 'to_me_has_not_read') {
         this.checkUserIsLoginOrNot()
-          .switchMap(x => this.loadMessageListToMe(x))
-          .filter(x => x.success)
-          .subscribe(x => this.replyToMeHasNotRead = x.data.hasnot_read_messages);
+          .pipe(
+            switchMap(x => this.loadMessageListToMe(x)),
+            filter(x => x['success']),
+          )
+          .subscribe(x => this.replyToMeHasNotRead = x['data']['hasnot_read_messages']);
       } else if (_ == 'to_other') {
         this.initUserLoginName()
-          .switchMap(x => this.loadMessageListToOtherOne(x))
-          .filter(x => x.success)
-          .subscribe(x => this.myRecentReplyList = x.data.recent_replies);
+          .pipe(
+            switchMap(x => this.loadMessageListToOtherOne(x)),
+            filter(x => x['success']),
+          )
+          .subscribe(x => this.myRecentReplyList = x['data']['recent_replies']);
       } else {
         // error
       }

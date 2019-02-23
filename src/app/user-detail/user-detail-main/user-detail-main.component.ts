@@ -1,24 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ConfigService } from '../../service/config.service';
-import { Observable } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 
 import { User } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
+import { switchMap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-detail-main',
   templateUrl: './user-detail-main.component.html',
   styleUrls: ['./user-detail-main.component.styl']
 })
-export class UserDetailMainComponent implements OnInit {
+export class UserDetailMainComponent implements OnInit, OnDestroy {
 
-  private loginname: string;
+  loginname: string;
 
-  private userDetail: User;
+  userDetail: User;
+
+  private _userDetailSubscription: Subscription;
 
   constructor(
-    private _http: HttpClient,
+    private _httpClient: HttpClient,
     private _activatedRoute: ActivatedRoute,
     private _configService: ConfigService,
   ) { }
@@ -27,16 +30,30 @@ export class UserDetailMainComponent implements OnInit {
     this.loadData();
   }
 
+  ngOnDestroy() {
+    this._userDetailSubscription && this._userDetailSubscription.unsubscribe();
+  }
+
   initParams(): Observable<string> {
-    return this._activatedRoute.params.switchMap(x => Observable.of(x['loginname']));
+    return this._activatedRoute.params
+      .pipe(
+        switchMap(x => of(x['loginname'])),
+      );
   }
 
   loadUserDetail(): Observable<any> {
-    return this.initParams().switchMap(x => this._http.get(this._configService.getUserDetail() + x)).filter(x => x.ok).map(x => x.json());
+    return this.initParams()
+      .pipe(
+        switchMap(x => this._httpClient.get(this._configService.getUserDetail()+x)),
+      );
   }
 
   loadData() {
-    this.loadUserDetail().filter(x => x.success).subscribe(x => this.userDetail = x.data);
+    this._userDetailSubscription = this.loadUserDetail()
+      .pipe(
+        filter(x => x['success']),
+      )
+      .subscribe(x => this.userDetail = x['data']);
   }
 
 }

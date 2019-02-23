@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 import { ConfigService } from '../../service/config.service';
 import { Recent } from '../../model/recent';
-import { HttpClient } from 'selenium-webdriver/http';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-detail-topics',
@@ -13,10 +14,10 @@ import { HttpClient } from 'selenium-webdriver/http';
 })
 export class UserDetailTopicsComponent implements OnInit {
 
-  private recentTopicList: Recent[];
+  recentTopicList$: Observable<Recent[]>;
 
   constructor(
-    private _http: HttpClient,
+    private _httpClient: HttpClient,
     private _configService: ConfigService,
     private _activatedRoute: ActivatedRoute,
   ) { }
@@ -26,16 +27,19 @@ export class UserDetailTopicsComponent implements OnInit {
   }
 
   initParams(): Observable<string> {
-    return this._activatedRoute.params.filter(x => x['loginname']).map(x => x['loginname']);
+    return this._activatedRoute.params
+      .pipe(
+        filter(x => x['loginname']),
+        map(x => x['loginname']),
+      );
   }
 
   initTopics() {
-    this.initParams()
-      .switchMap(x => this._http.get(this._configService.getUserDetail() + x))
-      .filter(x => x.ok).map(x => x.json())
-      .filter(x => x.success)
-      .map(x => x.data.recent_topics)
-      .subscribe(x => this.recentTopicList = x);
+    this.recentTopicList$ = this.initParams()
+      .pipe(
+        switchMap(x => this._httpClient.get(this._configService.getUserDetail()+x)),
+        filter(x => x['success']),
+        map(x => x['data']['recent_topics']),
+      );
   }
-
 }

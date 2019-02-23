@@ -33,12 +33,14 @@
       </span>
       <span class="light_tab" *ngIf="_topic?.top">置顶</span>
       <span class="light_tab" *ngIf="!_topic?.top && _topic?.good">精华</span>
-      <span class="tab" *ngIf="!_topic?.top && !_topic?.good && _topic?.tab" [ngSwitch]="_topic?.tab">
-        <template [ngSwitchCase]="'ask'">问答</template>
-        <template [ngSwitchCase]="'share'">分享</template>
-        <template [ngSwitchCase]="'job'">招聘</template>
-        <template [ngSwitchCase]="'good'">精华</template>
-      </span>
+      <!-- <span class="tab" *ngIf="!_topic?.top && !_topic?.good && _topic?.tab"
+        [ngSwitch]="_topic?.tab">
+        <ng-container [ngSwitchCase]="'ask'">问答</ng-container>
+        <ng-container [ngSwitchCase]="'share'">分享</ng-container>
+        <ng-container [ngSwitchCase]="'job'">招聘</ng-container>
+        <ng-container [ngSwitchCase]="'good'">精华</ng-container>
+        <ng-container *ngSwitchDefault>test</ng-container>
+      </span> -->
       <span class="title">
         <a [routerLink]="['/topic', _topic?.id]">{{_topic?.title}}</a>
       </span>

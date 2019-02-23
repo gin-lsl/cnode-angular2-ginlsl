@@ -3,6 +3,7 @@ import { Recent } from '../../../model/recent';
 import { Component, OnInit } from '@angular/core';
 import { ConfigService } from '../../../service/config.service';
 import { UserAuthService } from '../../../service/subjects/user-auth.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-topic',
@@ -11,9 +12,9 @@ import { UserAuthService } from '../../../service/subjects/user-auth.service';
 })
 export class MyTopicComponent implements OnInit {
 
-  private myRecentTopicList: Recent[];
+  myRecentTopicList: Recent[];
 
-  private errorMsg: string;
+  errorMsg: string;
 
   constructor(
     private _http: HttpClient,
@@ -28,8 +29,10 @@ export class MyTopicComponent implements OnInit {
     if (_at != null) {
       this._http
         .post(this._configService.userValidAPI(), { accesstoken: _at })
-        .switchMap(res => this._http.get(this._configService.getUserDetail() + res.json().loginname/*'alsotang'*/))
-        .subscribe(res => { this.myRecentTopicList = res.json().data.recent_topics }, err => this.errorMsg = err);
+        .pipe(
+          switchMap(res => this._http.get(this._configService.getUserDetail() + res['loginname']/*'alsotang'*/))
+        )
+        .subscribe(res => { this.myRecentTopicList = res['data']['recent_topics'] }, err => this.errorMsg = err);
     }
   }
 

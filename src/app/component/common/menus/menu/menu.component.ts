@@ -8,7 +8,7 @@ import { MenuItem } from '../../../../model/menu-item';
 })
 export class MenuComponent implements OnInit {
 
-  private menuItemListddd: MenuItem[] = [
+  menuItemListddd: MenuItem[] = [
     { index: 0, title: '全部', routerLink: '/all' },
     { index: 1, title: '精华', routerLink: '/good' },
     { index: 2, title: '分享', routerLink: '/share' },
@@ -16,7 +16,7 @@ export class MenuComponent implements OnInit {
     { index: 4, title: '招聘', routerLink: '/job' }
   ]
 
-  private menuItemList: MenuItem[] = [
+  menuItemList: MenuItem[] = [
     { index: 0, title: '首页', routerLink: '/home' },
     { index: 1, title: '收藏', routerLink: '/favorite' },
     { index: 2, title: '评论', routerLink: '/comment' },

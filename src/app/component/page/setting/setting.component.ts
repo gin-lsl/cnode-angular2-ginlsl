@@ -15,7 +15,7 @@ export class SettingComponent implements OnInit {
 
   private userDetailUri: string;
 
-  private userDetail: User;
+  userDetail: User;
 
   private validationUri: string;
 
@@ -43,27 +43,25 @@ export class SettingComponent implements OnInit {
 
   doValidateAccessToken(accessToken: string) {
     this._http.post(this.validationUri, { accesstoken: accessToken }).subscribe(res => {
-      if (!res.ok) {
-        // 认证失败
-        this._userAuthService.resetAccessToken();
-        this.userDetail = null;
-      } else {
+      // if (!res.ok) {
+      //   // 认证失败
+      //   this._userAuthService.resetAccessToken();
+      //   this.userDetail = null;
+      // } else {
         // 认证成功
-        let _json = res.json();
-        if (_json.success) {
+        if (res['success']) {
           // 加载用户信息
-          let loginname = _json.loginname;
+          let loginname = res['loginname'];
           this._http.get(this.userDetailUri + loginname).subscribe(resUser => {
-            let _jsonUser = resUser.json();
-            if (!_jsonUser) {
+            if (!resUser['success']) {
               throw new Error('请求失败, 请稍后重试...');
             } else {
-              this.userDetail = _jsonUser.data;
+              this.userDetail = resUser['data'];
               this._userAuthService.setAccessTokenToLocalStorage(accessToken);
             }
           });
         }
-      }
+      // }
     });
   }
 

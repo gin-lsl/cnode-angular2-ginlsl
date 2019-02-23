@@ -8,7 +8,7 @@ import { AppBarButtonTappedService } from '../../../../service/subjects/app-bar-
 })
 export class SplitViewComponent implements OnInit {
 
-  private isMenuPaneOpen: boolean = true;
+  isMenuPaneOpen: boolean = true;
 
   constructor(
     private _appBarButtonTappedService: AppBarButtonTappedService,

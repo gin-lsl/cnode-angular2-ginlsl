@@ -1,25 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { HttpBaseService } from '../../../service/base/http-base.service';
 import { ConfigService } from '../../../service/config.service';
 import { Topic } from '../../../model/topic';
 import { Dto } from '../../../model/dto';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.styl'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   /**
    * 页面所需数据是否加载完成
    */
-  private dataLoadFinish: boolean = false;
+  dataLoadFinish: boolean = false;
 
   /**
    * 查询参数： 标签 tab
@@ -31,7 +32,9 @@ export class HomeComponent implements OnInit {
   /**
    * 话题列表
    */
-  private topicList: Topic[];
+  topicList: Topic[];
+
+  private _topicListSubscription: Subscription;
 
   /**
    * topics 的api接口
@@ -41,7 +44,7 @@ export class HomeComponent implements OnInit {
   /**
    * 错误消息
    */
-  private errorMsg: string;
+  errorMsg: string;
 
   /**
    * 分页用数据
@@ -63,7 +66,7 @@ export class HomeComponent implements OnInit {
   public maxSize: number = 5;
 
   constructor(
-    private _http: HttpClient,
+    private _httpClient: HttpClient,
     private _router: Router,
     private _configService: ConfigService,
     private _activatedRoute: ActivatedRoute,
@@ -75,20 +78,25 @@ export class HomeComponent implements OnInit {
     this.loadTopicList();
   }
 
+  ngOnDestroy() {
+    this._topicListSubscription && this._topicListSubscription.unsubscribe();
+  }
+
   /**
    * 加载页面的参数（可选参数）
    */
   initCurrentPage_TabAnd_Page(): Observable<Topic[]> {
-    return this._activatedRoute.queryParams.switchMap(_params$ => {
-      this.tab = _params$['tab'];
-      let _page = _params$['page'];
-      if (_page != null) {
-        this.currentPage = +_page;
-      } else {
-        this.currentPage = 1;
-      }
-      return this.loadTopicListData();
-    });
+    return this._activatedRoute.queryParams
+      .pipe(
+        switchMap(
+          _params => {
+            this.tab = _params['tab'];
+            let _page = _params['page'];
+            this.currentPage = _page ? +_page : 1;
+            return this.loadTopicListData();
+          }
+        ),
+      );
   }
 
   /**
@@ -100,18 +108,19 @@ export class HomeComponent implements OnInit {
     if (this.currentPage != null) {
       _params.append('page', '' + this.currentPage)
     }
-    return this._http.get(this._configService.getTopics(), { params: _params })
-      .filter(_ => _.ok)
-      .map(_ => _.json())
-      .filter(_ => _.success)
-      .map(_ => _.data as Topic[]);
+    return this._httpClient.get(this._configService.getTopics(), {params: _params})
+      .pipe(
+        filter(x => x['success']),
+        map(x => x['data'] as Topic[]),
+      );
   }
 
   /**
    * 对获取数据的方法返回的 Observable 对象订阅并处理结果
    */
   loadTopicList() {
-    this.initCurrentPage_TabAnd_Page().subscribe(_ => { this.topicList = _; this.dataLoadFinish = true; });
+    this._topicListSubscription = this.initCurrentPage_TabAnd_Page()
+      .subscribe(_ => { this.topicList = _; this.dataLoadFinish = true; });
   }
 
   /**
